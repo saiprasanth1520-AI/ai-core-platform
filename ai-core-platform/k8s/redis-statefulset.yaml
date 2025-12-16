@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: ai-core-platform
+spec:
+  serviceName: redis-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      serviceAccountName: ai-core-platform-sa
+      containers:
+        - name: ai-core-platform-redis-1
+          image: 194722419261.dkr.ecr.us-west-2.amazonaws.com/ai-core-platform/redis:alpine # will change
+          ports:
+            - containerPort: 6379
+              name: redis
+          volumeMounts:
+            - name: ai-core-platform-redis-data-1
+              mountPath: /data
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+  volumeClaimTemplates:
+    - metadata:
+        name: ai-core-platform-redis-data-1
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: ai-core-platform
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+      name: redis
+  clusterIP: None

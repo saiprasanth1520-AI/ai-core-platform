@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-core-platform-service
+  namespace: ai-core-platform
+spec:
+  selector:
+    app: ai-core-platform
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP

@@ -1,0 +1,21 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: ai-core-platform-pdb
+  namespace: ai-core-platform
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: ai-core-platform
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai-core-platform-config
+  namespace: ai-core-platform
+data:
+  NODE_ENV: "production"
+  LOG_LEVEL: "info"
+  API_TIMEOUT: "30000"
+  MAX_PAYLOAD_SIZE: "10mb"
